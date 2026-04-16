@@ -1,22 +1,39 @@
-# .NET Performance & System Diagnostics
+# Execution-Driven Architecture
+> Controlling system behavior from input to output - deterministically.
 
-Practical approaches for diagnosing and fixing performance issues in .NET and SQL Server systems.
+---
 
-## Focus Areas
+## Overview
 
-- Slow APIs and backend services
-- EF Core query optimization
-- SQL Server performance (indexing, execution plans, locking)
-- Data access patterns (EF Core, ADO.NET, stored procedures)
-- System behavior under load
+Most systems are designed around structure:
 
-## Approach
+- Layers
+- Services
+- Patterns
 
-- Isolate bottlenecks quickly
-- Validate with real data (logs, queries, metrics)
-- Apply targeted fixes
-- Improve reliability and execution consistency
+This approach focuses on something else:
 
-## Context
+> Execution flow - how a system actually runs
 
-Experience from working on production systems across finance, banking, insurance, and enterprise environments.
+Instead of reacting to events and chaining handlers, this model defines:
+- explicit intent
+- deterministic execution
+- clear boundaries
+
+---
+
+## Core Idea
+
+> Policies decide. Contracts define. Orchestrators execute.
+
+---
+
+## Execution Pipeline
+
+```mermaid
+flowchart LR
+    A[Controller] --> B[Service]
+    B --> C[Policy]
+    C --> D[Execution Contract]
+    D --> E[Orchestrator]
+    E --> F[Database]
