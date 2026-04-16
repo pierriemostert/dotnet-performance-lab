@@ -7,9 +7,9 @@
 
 Most systems are designed around structure:
 
-- Layers
-- Services
-- Patterns
+- Layers  
+- Services  
+- Patterns  
 
 This approach focuses on something else:
 
@@ -30,7 +30,14 @@ Policies decide. Contracts define. Orchestrators execute.
 
 ## Execution Pipeline
 
-Controller -> Service -> Policy -> Execution Contract -> Orchestrator -> Database
+```mermaid
+flowchart LR
+    A[Controller] --> B[Service]
+    B --> C[Policy]
+    C --> D[Execution Contract]
+    D --> E[Orchestrator]
+    E --> F[Database]
+```
 
 ---
 
@@ -38,45 +45,49 @@ Controller -> Service -> Policy -> Execution Contract -> Orchestrator -> Databas
 
 Traditional systems often suffer from:
 
-- Event handler sprawl
-- Hidden execution paths
-- Hard-to-trace behavior
-- Coupled services
+- Event handler sprawl  
+- Hidden execution paths  
+- Hard-to-trace behavior  
+- Coupled services  
 
 This architecture replaces that with:
 
-- Explicit execution flow
-- Deterministic behavior
-- Clear ownership
-- Predictable outcomes
+- Explicit execution flow  
+- Deterministic behavior  
+- Clear ownership  
+- Predictable outcomes  
 
 ---
 
 ## Traditional vs Execution-Driven
 
-Traditional (Event-driven sprawl)
+### Traditional (Event-driven sprawl)
 
+```text
 Controller -> Handler -> Event -> Handler -> Handler -> ???
+```
 
-Execution-Driven (Deterministic)
+### Execution-Driven (Deterministic)
 
+```text
 Controller -> Service -> Policy -> Contract -> Orchestrator -> DB
+```
 
 ---
 
 ## Contracts (Execution Intent)
 
-Contracts define what must happen.
+Contracts define what must happen:
 
-Example:
-
+```csharp
 public record AssignUserLicenseInput(...) : IOrchestratorInput;
+```
 
 They:
 
-- originate from policies
-- contain all required data
-- drive execution directly
+- originate from policies  
+- contain all required data  
+- drive execution directly  
 
 ---
 
@@ -86,12 +97,11 @@ Orchestrators are pure execution units.
 
 They:
 
-- execute infrastructure logic
-- coordinate data operations
-- do not contain business rules
+- execute infrastructure logic  
+- coordinate data operations  
+- do not contain business rules  
 
-Example:
-
+```csharp
 public class AssignLicenseOrchestrator 
     : Orchestrator<AssignUserLicenseInput, AssignUserLicenseOutput>
 {
@@ -100,6 +110,7 @@ public class AssignLicenseOrchestrator
         // Persistence + execution logic
     }
 }
+```
 
 ---
 
@@ -107,24 +118,24 @@ public class AssignLicenseOrchestrator
 
 Policies are responsible for:
 
-- evaluating rules
-- producing outcomes
-- generating execution contracts
+- evaluating rules  
+- producing outcomes  
+- generating execution contracts  
 
 They do NOT:
 
-- perform persistence
-- call infrastructure
+- perform persistence  
+- call infrastructure  
 
 ---
 
 ## Domain Separation
 
-- Domains are isolated
-- No module depends on another module’s internals
+- Domains are isolated  
+- No module depends on another module’s internals  
 - Cross-domain interaction happens via:
-  - infrastructure
-  - orchestration
+  - infrastructure  
+  - orchestration  
 
 ---
 
@@ -132,13 +143,22 @@ They do NOT:
 
 This model naturally evolves:
 
-Modular Monolith
+### Modular Monolith
 
+```text
 Policy -> Contract -> Orchestrator
+```
 
-Distributed System
+### Distributed System
 
-Policy -> Contract -> Message Bus -> Orchestration Service -> Orchestrator -> Database
+```mermaid
+flowchart LR
+    A[Policy] --> B[Contract]
+    B --> C[Message Bus]
+    C --> D[Orchestration Service]
+    D --> E[Orchestrator]
+    E --> F[Database]
+```
 
 Same contracts. Same orchestrators. Different execution transport.
 
@@ -146,15 +166,17 @@ Same contracts. Same orchestrators. Different execution transport.
 
 ## Testing Strategy
 
-Policy Tests (Unit)
-- Validate decision logic
+### Policy Tests (Unit)
+Validate decision logic
 
-Orchestrator Tests (Integration)
-- Validate execution behavior
+### Orchestrator Tests (Integration)
+Validate execution behavior
 
-Workflow Tests (Integration)
+### Workflow Tests (Integration)
 
+```text
 Decision -> Execution -> Result
+```
 
 ---
 
@@ -164,9 +186,9 @@ The contract contains everything required for execution.
 
 No:
 
-- handler discovery
-- routing logic
-- implicit behavior
+- handler discovery  
+- routing logic  
+- implicit behavior  
 
 ---
 
@@ -174,11 +196,15 @@ No:
 
 Instead of:
 
+```text
 Event -> Handler -> Handler -> Handler
+```
 
 You get:
 
+```text
 Policy -> Contract -> Orchestrator
+```
 
 ---
 
@@ -191,11 +217,11 @@ The hard part is coordinating execution between them.
 
 ## What This Enables
 
-- Deterministic execution
-- Clear system behavior
-- Reduced complexity
-- Easier debugging
-- Seamless evolution to distributed systems
+- Deterministic execution  
+- Clear system behavior  
+- Reduced complexity  
+- Easier debugging  
+- Seamless evolution to distributed systems  
 
 ---
 
@@ -203,10 +229,10 @@ The hard part is coordinating execution between them.
 
 This approach aligns with modern needs:
 
-- High-throughput systems
-- Multi-context data operations
-- Controlled execution flows
-- Real-world system coordination
+- High-throughput systems  
+- Multi-context data operations  
+- Controlled execution flows  
+- Real-world system coordination  
 
 ---
 
@@ -214,9 +240,9 @@ This approach aligns with modern needs:
 
 This architecture shifts focus from structure to execution.
 
-- Policies define intent
-- Contracts carry intent
-- Orchestrators execute intent
+- Policies define intent  
+- Contracts carry intent  
+- Orchestrators execute intent  
 
 ---
 
